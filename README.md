@@ -1,6 +1,22 @@
 # BomberQuest - Refactored Structure
 
-This project has been refactored to use a standard Java package structure.
+This project has been refactored to use a standard Java package structure with complete design pattern implementation.
+
+## 📚 Complete Documentation
+
+For detailed design documentation, architecture diagrams, and UML visualizations:
+
+- **[DESIGN_DOCUMENTATION.md](DESIGN_DOCUMENTATION.md)** - Complete design patterns & architecture
+- **[DESIGN_VISUALIZATION.html](DESIGN_VISUALIZATION.html)** - Interactive HTML documentation (Open in browser)
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick reference guide for design patterns
+- **[diagrams/](diagrams/)** - PlantUML diagrams (Class, State, Sequence diagrams)
+- **[SOUND_ASSETS.md](SOUND_ASSETS.md)** - Sound effects documentation
+
+### View Diagrams Online
+1. Open any `.puml` file from `diagrams/` folder
+2. Copy content
+3. Paste to https://www.plantuml.com/plantuml/uml/
+4. View generated diagram
 
 ## Project Structure
 

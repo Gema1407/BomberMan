@@ -1,0 +1,121 @@
+@startuml State_Transition_Sequence
+
+actor Player
+participant "CurrentState\n:GameState" as CurrentState
+participant GameManager
+participant TransitionManager
+participant "NewState\n:GameState" as NewState
+participant SoundManager
+
+Player -> CurrentState: Press Key (e.g., ENTER)
+activate CurrentState
+
+CurrentState -> GameManager: handleInput(keyCode)
+activate GameManager
+
+GameManager -> CurrentState: handleInput(keyCode, this)
+
+CurrentState -> CurrentState: Process input\n(e.g., menu selection)
+
+alt State change requested
+    CurrentState -> GameManager: setState(newState, transitionType)
+    
+    GameManager -> TransitionManager: getInstance()
+    activate TransitionManager
+    TransitionManager --> GameManager: instance
+    deactivate TransitionManager
+    
+    GameManager -> TransitionManager: startTransition(current, new, type)
+    activate TransitionManager
+    
+    TransitionManager -> TransitionManager: transitioning = true
+    TransitionManager -> TransitionManager: transitionFrame = 0
+    TransitionManager -> TransitionManager: midTransition = false
+    
+    TransitionManager --> GameManager
+    deactivate TransitionManager
+    
+    alt Music change needed
+        GameManager -> SoundManager: playMusic(BGM_xxx)
+        activate SoundManager
+        SoundManager -> SoundManager: stopMusic()
+        SoundManager -> SoundManager: currentMusic.loop()
+        SoundManager --> GameManager
+        deactivate SoundManager
+    end
+    
+    GameManager -> GameManager: currentState = newState
+    
+    GameManager --> CurrentState
+    
+end
+
+CurrentState --> Player
+deactivate CurrentState
+deactivate GameManager
+
+loop Transition Animation (20 frames)
+    Player -> BomberQuest: Timer tick
+    activate BomberQuest
+    
+    BomberQuest -> GameManager: update()
+    activate GameManager
+    
+    GameManager -> TransitionManager: update(this)
+    activate TransitionManager
+    
+    TransitionManager -> TransitionManager: transitionFrame++
+    
+    alt transitionFrame >= duration/2 && !midTransition
+        TransitionManager -> GameManager: setStateImmediate(toState)
+        TransitionManager -> TransitionManager: midTransition = true
+    end
+    
+    alt transitionFrame >= duration
+        TransitionManager -> TransitionManager: transitioning = false
+    end
+    
+    TransitionManager --> GameManager
+    deactivate TransitionManager
+    
+    GameManager -> NewState: update(this)
+    activate NewState
+    NewState --> GameManager
+    deactivate NewState
+    
+    GameManager --> BomberQuest
+    deactivate GameManager
+    
+    BomberQuest -> BomberQuest: repaint()
+    
+    BomberQuest -> GameManager: render(g2d)
+    activate GameManager
+    
+    GameManager -> NewState: render(g2d, this)
+    activate NewState
+    NewState --> GameManager
+    deactivate NewState
+    
+    GameManager -> TransitionManager: render(g2d, this, w, h)
+    activate TransitionManager
+    
+    TransitionManager -> TransitionManager: renderFade() / renderSlide() / etc
+    note right
+        Draws transition effect:
+        - FADE: Black overlay with alpha
+        - SLIDE: Curtain effect
+        - ZOOM_OUT: Vignette effect
+        - DISSOLVE: Pixelated blocks
+    end note
+    
+    TransitionManager --> GameManager
+    deactivate TransitionManager
+    
+    GameManager --> BomberQuest
+    deactivate GameManager
+    
+    BomberQuest --> Player: Display frame
+    deactivate BomberQuest
+end
+
+@enduml

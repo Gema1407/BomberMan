@@ -1,0 +1,99 @@
+@startuml BomberQuest_State_Classes
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor transparent
+
+package "com.bomberman.states" {
+    
+    interface GameState <<interface>> {
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+        + handleKeyReleased(int, GameManager): void
+    }
+    
+    class MainMenuState {
+        - selection: int
+        - options: String[]
+        __
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+    }
+    
+    class DifficultySelectionState {
+        - selection: int
+        - previewWalls: List
+        - previewEnemies: List
+        __
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+    }
+    
+    class PlayingState {
+        - pressedKeys: Set<Integer>
+        - paused: boolean
+        __
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+        - handleMovement(GameManager): void
+        - triggerExplosion(...): void
+    }
+    
+    class GameOverState {
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+    }
+    
+    class VictoryState {
+        - username: StringBuilder
+        - saved: boolean
+        __
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+    }
+    
+    class SettingsState {
+        - selection: int
+        - pendingResolution: Resolution
+        __
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+    }
+    
+    class LeaderboardState {
+        - leaderboardManager: LeaderboardManager
+        __
+        + update(GameManager): void
+        + render(Graphics2D, GameManager): void
+        + handleInput(int, GameManager): void
+    }
+}
+
+' Implementations
+GameState <|.. MainMenuState
+GameState <|.. DifficultySelectionState
+GameState <|.. PlayingState
+GameState <|.. GameOverState
+GameState <|.. VictoryState
+GameState <|.. SettingsState
+GameState <|.. LeaderboardState
+
+note top of GameState
+  State Pattern
+  All game screens implement
+  this interface
+end note
+
+note bottom of PlayingState
+  Main gameplay state
+  Handles player movement,
+  bomb placement, collisions
+end note
+
+@enduml

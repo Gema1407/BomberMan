@@ -1,0 +1,133 @@
+@startuml BomberQuest_State_Diagram
+
+[*] --> MainMenuState : Game Start
+
+state MainMenuState {
+    state "Display Menu Options" as menu_display
+    state "Handle Selection" as menu_select
+    
+    [*] --> menu_display
+    menu_display --> menu_select : Arrow Keys
+    menu_select --> menu_display
+}
+
+MainMenuState --> DifficultySelectionState : Start Game
+MainMenuState --> LeaderboardState : View Leaderboard
+MainMenuState --> SettingsState : Settings
+MainMenuState --> [*] : Exit
+
+state DifficultySelectionState {
+    state "Show Difficulty Options" as diff_display
+    state "Preview Map Generation" as diff_preview
+    state "Handle Selection" as diff_select
+    
+    [*] --> diff_display
+    diff_display --> diff_preview : Selection Changed
+    diff_preview --> diff_select
+    diff_select --> diff_display : Arrow Keys
+}
+
+DifficultySelectionState --> PlayingState : Confirm (ENTER)
+DifficultySelectionState --> MainMenuState : Back (ESC)
+
+state PlayingState {
+    state "Active Gameplay" as playing
+    state "Paused" as paused
+    
+    [*] --> playing
+    playing --> paused : ESC
+    paused --> playing : Resume
+    paused --> SettingsState : Settings
+    paused --> MainMenuState : Main Menu
+    
+    state playing {
+        state "Update Game Logic" as update
+        state "Handle Player Input" as input
+        state "Update Entities" as entities
+        state "Collision Detection" as collision
+        
+        [*] --> input
+        input --> update
+        update --> entities
+        entities --> collision
+        collision --> input
+    }
+}
+
+PlayingState --> GameOverState : Player HP = 0
+PlayingState --> VictoryState : All Enemies Defeated
+
+state GameOverState {
+    state "Display Game Over" as gameover_display
+    state "Show Options" as gameover_options
+    
+    [*] --> gameover_display
+    gameover_display --> gameover_options
+}
+
+GameOverState --> DifficultySelectionState : Try Again (ENTER)
+GameOverState --> MainMenuState : Main Menu (ESC)
+
+state VictoryState {
+    state "Display Victory" as victory_display
+    state "Input Username" as victory_input
+    state "Save Score" as victory_save
+    state "Show Options" as victory_options
+    
+    [*] --> victory_display
+    victory_display --> victory_input : [!saved]
+    victory_input --> victory_save : ENTER
+    victory_save --> victory_options : Success
+    victory_options --> [*]
+}
+
+VictoryState --> DifficultySelectionState : Play Again (ENTER)
+VictoryState --> MainMenuState : Main Menu (ESC)
+
+state SettingsState {
+    state "Display Settings" as settings_display
+    state "Edit Settings" as settings_edit
+    state "Apply Changes" as settings_apply
+    
+    [*] --> settings_display
+    settings_display --> settings_edit : Arrow Keys / ENTER
+    settings_edit --> settings_apply : Apply (ENTER)
+    settings_apply --> settings_display
+}
+
+SettingsState --> MainMenuState : Back (ESC)
+SettingsState --> PlayingState : [from pause menu]
+
+state LeaderboardState {
+    state "Load Scores" as lb_load
+    state "Display Top 10" as lb_display
+    
+    [*] --> lb_load
+    lb_load --> lb_display
+}
+
+LeaderboardState --> MainMenuState : Back (ESC)
+
+note right of PlayingState
+    Main gameplay loop:
+    - Player movement
+    - Bomb placement
+    - Enemy AI
+    - Collision detection
+    - Explosion handling
+end note
+
+note right of VictoryState
+    Validates username:
+    - Must be unique
+    - Max 12 characters
+    - Saves to leaderboard.dat
+end note
+
+note bottom of GameManager
+    GameManager acts as the Context
+    in the State Pattern, managing
+    all state transitions
+end note
+
+@enduml

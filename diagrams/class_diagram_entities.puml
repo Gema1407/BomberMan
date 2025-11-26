@@ -1,0 +1,84 @@
+@startuml BomberQuest_Entity_Classes
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor transparent
+
+package "com.bomberman.entities" {
+    
+    abstract class GameObject {
+        # x: int
+        # y: int
+        # color: Color
+        # active: boolean
+        __
+        + GameObject(int, int)
+        + {abstract} render(Graphics2D, int): void
+        + update(): void
+        + getX(): int
+        + getY(): int
+        + isActive(): boolean
+    }
+    
+    class Player {
+        - hp: int
+        - invincibleTimer: int
+        __
+        + Player(int, int)
+        + damage(): boolean
+        + getHp(): int
+        + reset(): void
+    }
+    
+    class Enemy {
+        - moveTimer: int
+        - moveInterval: int
+        __
+        + Enemy(int, int)
+        + tryMove(...): void
+    }
+    
+    class Bomb {
+        - timer: int
+        - radius: int
+        __
+        + Bomb(int, int, int)
+        + getRadius(): int
+    }
+    
+    class Explosion {
+        - timer: int
+        __
+        + Explosion(int, int)
+    }
+    
+    class Wall {
+        - destructible: boolean
+        __
+        + Wall(int, int, boolean)
+        + isDestructible(): boolean
+    }
+}
+
+' Inheritance relationships
+GameObject <|-- Player
+GameObject <|-- Enemy
+GameObject <|-- Bomb
+GameObject <|-- Explosion
+GameObject <|-- Wall
+
+note top of GameObject
+  Template Method Pattern
+  Base class for all entities
+end note
+
+note right of Player
+  Has invincibility
+  timer after damage
+end note
+
+note right of Enemy
+  AI moves toward player
+  Speed based on difficulty
+end note
+
+@enduml
