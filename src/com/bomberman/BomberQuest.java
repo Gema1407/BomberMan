@@ -1,9 +1,7 @@
 package com.bomberman;
 
 import com.bomberman.core.GameManager;
-import com.bomberman
-
-.exceptions.GameInitializationException;
+import com.bomberman.exceptions.GameInitializationException;
 import com.bomberman.managers.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
@@ -140,6 +138,21 @@ public class BomberQuest extends JPanel implements ActionListener {
         int offsetY = (int) ((winH - (gameH * scale)) / 2);
         
         // Apply Transform
+        g2d.translate(offsetX, offsetY);
+        g2d.scale(scale, scale);
+        
+        // Clip to game area to prevent drawing outside
+        g2d.setClip(0, 0, gameW, gameH);
+
+        // Rendering Hints for Retro Look (Nearest Neighbor)
+        if (SettingsManager.getInstance().isRetroEffects()) {
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        } else {
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+
         gameManager.render(g2d);
         
         // FPS Counter

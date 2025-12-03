@@ -1,7 +1,7 @@
 package com.bomberman.core;
 
 import com.bomberman.states.GameState;
-import java.awt.AlphaComposite;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -13,7 +13,7 @@ public class TransitionManager {
     private int transitionFrame = 0;
     private int transitionDuration = 20; // frames
     
-    private GameState fromState;
+
     private GameState toState;
     private boolean midTransition = false;
     
@@ -35,7 +35,7 @@ public class TransitionManager {
     }
     
     public void startTransition(GameState from, GameState to, TransitionType type) {
-        this.fromState = from;
+
         this.toState = to;
         this.type = type;
         this.transitioning = true;

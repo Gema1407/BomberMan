@@ -39,8 +39,9 @@ public class EventSystem<T extends GameEvent> {
      * @param eventType Class object for the event type
      * @param listener Listener to be notified when event occurs
      */
+    @SuppressWarnings("unchecked")
     public <E extends T> void subscribe(Class<E> eventType, EventListener<E> listener) {
-        listeners.computeIfAbsent(eventType, k -> new ArrayList<>()).add(listener);
+        listeners.computeIfAbsent(eventType, k -> new ArrayList<>()).add((EventListener<? super T>) listener);
     }
     
     /**

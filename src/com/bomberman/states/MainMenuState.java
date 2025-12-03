@@ -33,8 +33,8 @@ public class MainMenuState implements GameState {
         }
 
         // Title Animation
-        double time = System.currentTimeMillis() * 0.002;
-        double scale = 1.0 + Math.sin(time) * 0.05;
+
+
         
         Font titleFont = new Font("Consolas", Font.BOLD, 60);
         g2d.setFont(titleFont);

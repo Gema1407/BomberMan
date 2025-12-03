@@ -72,9 +72,6 @@ public class GameManager {
 
     // Initialize Game
     public void init() throws GameInitializationException {
-        if (GRID_W < 5 || GRID_H < 5) {
-            throw new GameInitializationException("Map size too small!");
-        }
         // Initialize Sound
         SoundManager.getInstance().initSounds();
         SoundManager.getInstance().playMusic(SoundManager.BGM_MENU);
