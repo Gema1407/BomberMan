@@ -58,9 +58,12 @@ Antarmuka pengguna dibangun menggunakan Java Swing/AWT:
 
 ### 7. Design Diagram Kelas (10 Poin)
 Diagram kelas telah dirancang untuk memvisualisasikan struktur dan hubungan antar kelas dalam sistem.
-*   *File Diagram:* Tersedia di folder `diagrams/` (misalnya `class_diagram_overview.png`).
+*   *File Diagram:* Tersedia di folder `diagrams/` (misalnya `Design Class Diagram.png`).
 
 ---
+
+## Class Diagram
+![Design Class Diagram](diagrams/DesignClassDiagram.svg)
 
 ## Screenshot Game
 
