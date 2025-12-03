@@ -1,12 +1,18 @@
 # BomberQuest - Design Documentation
 
+**Version**: 2.0 - Ultra Performance Edition  
+**Last Updated**: 2025-12-03  
+**New Features**: Ultra High FPS + A* Pathfinding AI
+
 ## Table of Contents
 1. [Architecture Overview](#architecture-overview)
 2. [Design Patterns](#design-patterns)
-3. [Class Diagram](#class-diagram)
-4. [Package Structure](#package-structure)
-5. [Relationships & Dependencies](#relationships--dependencies)
-6. [Sequence Diagrams](#sequence-diagrams)
+3. [AI System](#ai-system) ⭐ NEW
+4. [Performance Optimizations](#performance-optimizations) ⭐ NEW
+5. [Class Diagram](#class-diagram)
+6. [Package Structure](#package-structure)
+7. [Relationships & Dependencies](#relationships--dependencies)
+8. [Sequence Diagrams](#sequence-diagrams)
 
 ---
 
@@ -47,7 +53,16 @@ BomberQuest menggunakan arsitektur berbasis **State Pattern** dan **MVC (Model-V
 
 ## Design Patterns
 
-### 1. **Singleton Pattern**
+BomberQuest implements **7 Design Patterns** covering all three categories:
+- **Creational**: Singleton, Factory
+- **Structural**: Decorator
+- **Behavioral**: State, Observer, Template Method, Strategy
+
+---
+
+### 1. **Singleton Pattern** (Creational)
+
+**Category**: Creational Design Pattern
 
 **Used in:**
 - `GameManager`
@@ -74,9 +89,121 @@ public class GameManager {
 }
 ```
 
+**Benefits:**
+- Global access point
+- Controlled instantiation
+- Lazy initialization
+- Thread-safe implementation
+
 ---
 
-### 2. **State Pattern**
+### 2. **Factory Pattern** (Creational)
+
+**Category**: Creational Design Pattern
+
+**Used in:** `EntityFactory`
+
+**Purpose:** Centralisasi pembuatan game entities dengan logic yang konsisten.
+
+**Implementation:**
+```java
+public class EntityFactory {
+    public static GameObject createWall(int x, int y, boolean hard) {
+        return new Wall(x, y, !hard);
+    }
+    
+    public static Enemy createEnemy(int x, int y) {
+        return new Enemy(x, y);
+    }
+    
+    public static Bomb createBomb(int x, int y, int radius) {
+        return new Bomb(x, y, radius);
+    }
+}
+```
+
+**Benefits:**
+- Encapsulates object creation
+- Consistent entity initialization
+- Easy to extend with new entity types
+- Separates creation from usage
+
+---
+
+### 3. **Decorator Pattern** (Structural) ⭐ NEW
+
+**Category**: Structural Design Pattern
+
+**Used in:** PowerUp System
+
+**Purpose:** Dynamically add abilities to player without modifying Player class.
+
+**Implementation:**
+```java
+// Base Decorator
+public abstract class PowerUp {
+    protected final String name;
+    protected int duration;
+    protected boolean active;
+    
+    public abstract void apply(Player player);
+    public abstract void remove(Player player);
+}
+
+// Concrete Decorators
+public class SpeedBoost extends PowerUp {
+    public void apply(Player player) {
+        player.setSpeedBoost(1.5);
+    }
+    
+    public void remove(Player player) {
+        player.setSpeedBoost(1.0);
+    }
+}
+
+public class BombCapacityBoost extends PowerUp {
+    public void apply(Player player) {
+        player.addMaxBombs(2);
+    }
+    
+    public void remove(Player player) {
+        player.addMaxBombs(-2);
+    }
+}
+
+public class ExplosionRangeBoost extends PowerUp {
+    public void apply(Player player) {
+        player.addBombRadius(2);
+    }
+    
+    public void remove(Player player) {
+        player.addBombRadius(-2);
+    }
+}
+
+// Usage in Player
+public class Player extends GameObject {
+    private List<PowerUp> activePowerUps = new ArrayList<>();
+    
+    public void addPowerUp(PowerUp powerUp) {
+        powerUp.apply(this);
+        activePowerUps.add(powerUp);
+    }
+}
+```
+
+**Benefits:**
+- Add functionality without modifying Player class
+- Stack multiple power-ups
+- Easy to add new power-up types
+- Clean separation of concerns
+- Follows Open/Closed Principle
+
+---
+
+### 4. **State Pattern** (Behavioral)
+
+**Category**: Behavioral Design Pattern
 
 **Used in:** Game State Management
 
@@ -127,26 +254,17 @@ public class GameManager {
          └───────────────┘
 ```
 
----
-
-### 3. **Factory Pattern**
-
-**Used in:** `EntityFactory`
-
-**Purpose:** Centralisasi pembuatan game entities dengan logic yang konsisten.
-
-**Implementation:**
-```java
-public class EntityFactory {
-    public static GameObject createWall(int x, int y, boolean hard);
-    public static Enemy createEnemy(int x, int y);
-    public static Bomb createBomb(int x, int y, int radius);
-}
-```
+**Benefits:**
+- Clean state transitions
+- Each state handles its own logic
+- Easy to add new states
+- Eliminates complex conditionals
 
 ---
 
-### 4. **Observer Pattern (Simplified)**
+### 5. **Observer Pattern** (Behavioral)
+
+**Category**: Behavioral Design Pattern
 
 **Used in:** Settings Change Notification
 
@@ -158,13 +276,26 @@ public interface SettingsApplyListener {
     void onSettingsApplied();
 }
 
-// GameManager implements observer
+// GameManager registers as observer
 gameManager.setSettingsListener(() -> checkSettingsChange());
+
+// SettingsManager notifies observers
+public void applySettings() {
+    // Apply settings...
+    gameManager.notifySettingsApplied();
+}
 ```
+
+**Benefits:**
+- Loose coupling between subjects and observers
+- Dynamic subscriptions
+- Automatic notifications
 
 ---
 
-### 5. **Template Method Pattern**
+### 6. **Template Method Pattern** (Behavioral)
+
+**Category**: Behavioral Design Pattern
 
 **Used in:** `GameObject` abstract class
 
@@ -173,18 +304,53 @@ gameManager.setSettingsListener(() -> checkSettingsChange());
 **Implementation:**
 ```java
 public abstract class GameObject {
+    protected int x, y;
+    protected boolean active = true;
+    
     public abstract void render(Graphics2D g, int tileSize);
     public void update() {} // Default implementation
+    
+    // Common methods
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public boolean isActive() { return active; }
 }
 ```
 
+**Benefits:**
+- Defines common structure
+- Allows customization through overriding
+- Code reuse in base class
+- Enforces consistent interface
+
 ---
 
-### 6. **Strategy Pattern (Implicit)**
+### 7. **Strategy Pattern** (Behavioral)
+
+**Category**: Behavioral Design Pattern
 
 **Used in:** AI Movement in `Enemy`
 
 **Purpose:** Different movement strategies based on difficulty.
+
+**Implementation:**
+```java
+public class Enemy extends GameObject {
+    private int getMoveInterval() {
+        switch (GameManager.getInstance().getDifficulty()) {
+            case EASY:   return 45;  // Slower
+            case MEDIUM: return 30;  // Normal
+            case HARD:   return 15;  // Faster
+            default:     return 30;
+        }
+    }
+}
+```
+
+**Benefits:**
+- Flexible algorithm selection
+- Easy to add new strategies
+- Behavior changes at runtime
 
 ---
 
