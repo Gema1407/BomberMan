@@ -293,7 +293,12 @@ public class PlayingState implements GameState {
     public void handleInput(int keyCode, GameManager gm) {
         if (keyCode == KeyEvent.VK_ESCAPE) {
             paused = !paused;
-            if (!paused) pressedKeys.clear(); // Reset keys on resume
+            if (paused) {
+                SoundManager.getInstance().pauseMusic();
+            } else {
+                SoundManager.getInstance().resumeMusic();
+                pressedKeys.clear(); // Reset keys on resume
+            }
             return;
         }
 
@@ -307,6 +312,7 @@ public class PlayingState implements GameState {
             } else if (keyCode == KeyEvent.VK_ENTER) {
                 if (pauseSelection == 0) { // Resume
                     paused = false;
+                    SoundManager.getInstance().resumeMusic();
                     pressedKeys.clear();
                 } else if (pauseSelection == 1) { // Settings
                     gm.setState(gm.SETTINGS_STATE, com.bomberman.core.TransitionManager.TransitionType.FADE);

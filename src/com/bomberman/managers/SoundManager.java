@@ -102,6 +102,18 @@ public class SoundManager {
         }
     }
 
+    public void pauseMusic() {
+        if (currentMusic != null && currentMusic.isRunning()) {
+            currentMusic.stop();
+        }
+    }
+
+    public void resumeMusic() {
+        if (currentMusic != null && !musicMuted && !currentMusic.isRunning()) {
+            currentMusic.start();
+        }
+    }
+
     public void playSFX(String name) {
         if (sounds.containsKey(name) && !sfxMuted) {
             Clip clip = sounds.get(name);
