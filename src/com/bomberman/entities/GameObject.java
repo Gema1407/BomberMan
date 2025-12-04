@@ -4,11 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public abstract class GameObject {
-    protected int x, y; // Grid coordinates
+    protected int x; // Grid coordinates x
+    protected int y; // Grid coordinates y
     protected Color color;
     protected boolean active = true;
 
-    public GameObject(int x, int y) {
+    protected GameObject(int x, int y) {
         this.x = x;
         this.y = y;
     }

@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class LeaderboardState implements GameState {
     private LeaderboardManager leaderboardManager;
+    private static final String FONT_NAME_DEFAULT = "Consolas";
 
     public LeaderboardState() {
         leaderboardManager = LeaderboardManager.getInstance();
@@ -18,6 +19,8 @@ public class LeaderboardState implements GameState {
 
     @Override
     public void update(GameManager gm) {
+        // Handle periodic game logic, state changes, or object movement/behavior
+        // for this component, driven by the main game loop (gm).
     }
 
     @Override
@@ -33,7 +36,7 @@ public class LeaderboardState implements GameState {
 
         // Title
         g2d.setColor(new Color(255, 215, 0)); // Gold
-        g2d.setFont(new Font("Consolas", Font.BOLD, 48));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 48));
         String title = "TOP SCORES";
         int titleW = g2d.getFontMetrics().stringWidth(title);
         g2d.drawString(title, (screenW - titleW) / 2, 80);
@@ -45,15 +48,15 @@ public class LeaderboardState implements GameState {
         
         // Header Background with gradient
         java.awt.GradientPaint headerGp = new java.awt.GradientPaint(
-            tableX, headerY - 30, new Color(70, 130, 180, 150),
-            tableX, headerY + 10, new Color(100, 149, 237, 120)
+            tableX, (float) headerY - 30, new Color(70, 130, 180, 150),
+            tableX, (float) headerY + 10, new Color(100, 149, 237, 120)
         );
         g2d.setPaint(headerGp);
         g2d.fillRoundRect(tableX, headerY - 30, tableW, 40, 10, 10);
 
         // Header Text
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 22));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 22));
         g2d.drawString("RANK", tableX + 30, headerY);
         g2d.drawString("NAME", tableX + 200, headerY);
         g2d.drawString("TIME", tableX + 550, headerY);
@@ -63,7 +66,7 @@ public class LeaderboardState implements GameState {
         g2d.drawLine(tableX, headerY + 12, tableX + tableW, headerY + 12);
 
         // List
-        g2d.setFont(new Font("Consolas", Font.PLAIN, 22));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 22));
         List<Map.Entry<String, Integer>> topScores = leaderboardManager.getTopScores();
         int y = headerY + 50;
         int count = 0;
@@ -79,16 +82,18 @@ public class LeaderboardState implements GameState {
             }
 
             // Rank Color
-            if (count == 0) g2d.setColor(new Color(255, 215, 0)); // Gold
-            else if (count == 1) g2d.setColor(new Color(192, 192, 192)); // Silver
-            else if (count == 2) g2d.setColor(new Color(205, 127, 50)); // Bronze
-            else g2d.setColor(new Color(220, 220, 240));
+            switch (count) {
+                case 0 -> g2d.setColor(new Color(255, 215, 0)); // Gold
+                case 1 -> g2d.setColor(new Color(192, 192, 192)); // Silver
+                case 2 -> g2d.setColor(new Color(205, 127, 50)); // Bronze
+                default -> g2d.setColor(new Color(220, 220, 240));
+            }
 
-            g2d.setFont(new Font("Consolas", Font.BOLD, 22));
+            g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 22));
             g2d.drawString("#" + (count + 1), tableX + 30, y);
             
             g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("Consolas", Font.PLAIN, 22));
+            g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 22));
             g2d.drawString(entry.getKey(), tableX + 200, y);
             
             // Format time
@@ -104,14 +109,14 @@ public class LeaderboardState implements GameState {
         // Empty State
         if (topScores.isEmpty()) {
             g2d.setColor(Color.GRAY);
-            g2d.setFont(new Font("Consolas", Font.ITALIC, 20));
+            g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.ITALIC, 20));
             String noScores = "No scores yet. Be the first!";
             int nsW = g2d.getFontMetrics().stringWidth(noScores);
             g2d.drawString(noScores, (screenW - nsW) / 2, headerY + 100);
         }
 
         g2d.setColor(Color.YELLOW);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 16));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 16));
         String footer = "Press ESC to Return";
         int footerW = g2d.getFontMetrics().stringWidth(footer);
         g2d.drawString(footer, (screenW - footerW) / 2, screenH - 50);

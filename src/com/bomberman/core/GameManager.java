@@ -2,17 +2,19 @@ package com.bomberman.core;
 
 import com.bomberman.entities.GameObject;
 import com.bomberman.entities.Player;
-import com.bomberman.states.*;
 import com.bomberman.exceptions.GameInitializationException;
 import com.bomberman.managers.SettingsManager;
 import com.bomberman.managers.SoundManager;
+import com.bomberman.states.*;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameManager {
     private static GameManager instance;
     private TransitionManager transitionManager;
+    private final Random random = new Random();
     
     // Constants
     public static final int TILE_SIZE = 48; // Increased for retro feel
@@ -27,7 +29,7 @@ public class GameManager {
     private List<GameObject> bombs;
     private List<GameObject> explosions;
     private Player player;
-
+    
     private GameState currentState;
     private GameState previousState;
     private boolean returnToPauseMenu = false;
@@ -86,6 +88,7 @@ public class GameManager {
     }
 
     public void resetGame() {
+        // Cleanup
         walls.clear();
         enemies.clear();
         bombs.clear();
@@ -93,7 +96,7 @@ public class GameManager {
         player.reset();
 
         // Generate Map
-        for (int y = 0; y < GRID_H; y++) {
+         for (int y = 0; y < GRID_H; y++) {
             for (int x = 0; x < GRID_W; x++) {
                 if (x == 0 || x == GRID_W - 1 || y == 0 || y == GRID_H - 1) {
                     walls.add(EntityFactory.createWall(x, y, true));
@@ -107,29 +110,27 @@ public class GameManager {
             }
         }
 
-        // Spawn Enemies based on Difficulty
+        // Generate Enemies
+        // Determine count based on Difficulty
         int enemiesToSpawn = 5;
         switch (currentDifficulty) {
-            case EASY: enemiesToSpawn = 3; break;
-            case MEDIUM: enemiesToSpawn = 6; break;
-            case HARD: enemiesToSpawn = 10; break;
+            case EASY -> enemiesToSpawn = 3;
+            case MEDIUM -> enemiesToSpawn = 6;
+            case HARD -> enemiesToSpawn = 10;
         }
 
+        // Spawning loop
         int count = 0;
         int maxAttempts = 1000;
         int attempts = 0;
         while (count < enemiesToSpawn && attempts < maxAttempts) {
             attempts++;
-            int ex = (int) (Math.random() * GRID_W);
-            int ey = (int) (Math.random() * GRID_H);
+            int ex = random.nextInt(GRID_W);
+            int ey = random.nextInt(GRID_H);
+            // 1. Check distance from player or Check if position is valid (assuming isValidMove is a helper method)
+            if (Math.abs(ex - player.getX()) + Math.abs(ey - player.getY()) <= 5 || !isValidMove(ex, ey, GRID_W, GRID_H, walls)) continue;
             
-            // Check distance from player
-            if (Math.abs(ex - player.getX()) + Math.abs(ey - player.getY()) <= 5) continue;
-            
-            // Check if position is valid
-            if (!isValidMove(ex, ey, GRID_W, GRID_H, walls)) continue;
-            
-            // Check minimum distance from other enemies (at least 3 tiles apart)
+            // 2. Check minimum distance from other enemies
             boolean tooClose = false;
             for (GameObject enemy : enemies) {
                 int dist = Math.abs(ex - enemy.getX()) + Math.abs(ey - enemy.getY());
@@ -146,7 +147,6 @@ public class GameManager {
         }
 
         gameStartTime = System.currentTimeMillis();
-        // Don't change state here - it's already handled by DifficultySelectionState with transition
     }
 
     public void setState(GameState state) {
@@ -176,18 +176,16 @@ public class GameManager {
         
         // Store previous state BEFORE entering settings (not after)
         // And never store SETTINGS_STATE as previous state
-        if (state == SETTINGS_STATE && currentState != SETTINGS_STATE) {
-            previousState = currentState;
-        } else if (state != SETTINGS_STATE && currentState != SETTINGS_STATE) {
+        if (state == SETTINGS_STATE && currentState != SETTINGS_STATE || state != SETTINGS_STATE && currentState != SETTINGS_STATE) {
             previousState = currentState;
         }
         
         this.currentState = state;
         
         // Don't restart music if returning to paused game or if already in that state's music
-        if (state == MAIN_MENU_STATE && currentState != MAIN_MENU_STATE) {
+        if (state == MAIN_MENU_STATE) {
             SoundManager.getInstance().playMusic(SoundManager.BGM_MENU);
-        } else if (state == PLAYING_STATE && !wasPaused && currentState != PLAYING_STATE) {
+        } else if (state == PLAYING_STATE && !wasPaused) {
             SoundManager.getInstance().playMusic(SoundManager.BGM_GAME);
         }
     }

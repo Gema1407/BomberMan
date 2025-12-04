@@ -15,7 +15,8 @@ public class Pathfinding {
      * Represents a node in the pathfinding grid.
      */
     private static class Node implements Comparable<Node> {
-        int x, y;
+        int x;
+        int y;
         int gCost; // Distance from start
         int hCost; // Heuristic distance to goal
         Node parent;

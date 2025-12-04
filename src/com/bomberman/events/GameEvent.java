@@ -1,5 +1,7 @@
 package com.bomberman.events;
 
+import java.util.Objects;
+
 /**
  * Base class for all game events.
  * Implements Comparable for priority-based event processing.
@@ -67,7 +69,36 @@ public abstract class GameEvent implements Comparable<GameEvent> {
         }
         return Long.compare(this.timestamp, other.timestamp);
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        // 1. Check for identity
+        if (this == obj) {
+            return true;
+        }
+        
+        // 2. Check for null or different class
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        // 3. Cast the object
+        GameEvent gameEvent = (GameEvent) obj;
+        
+        // 4. Compare the key fields used in compareTo
+        // An object is equal if both priority and timestamp match.
+        return priority == gameEvent.priority && 
+               timestamp == gameEvent.timestamp;
+    }
+
+    @Override
+    public int hashCode() {
+        // Use the same key fields (priority and timestamp) to compute the hash.
+        // The Objects utility class provides a simple, standard way to do this.
+        return Objects.hash(priority, timestamp);
+    }
+
+  
     /**
      * Handles this event. Subclasses should implement event-specific logic.
      */

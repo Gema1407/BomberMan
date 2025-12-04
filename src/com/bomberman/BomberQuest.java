@@ -3,18 +3,22 @@ package com.bomberman;
 import com.bomberman.core.GameManager;
 import com.bomberman.exceptions.GameInitializationException;
 import com.bomberman.managers.SettingsManager;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
 
 public class BomberQuest extends JPanel implements ActionListener {
+    private static final Logger logger = Logger.getLogger(BomberQuest.class.getName());
     private Timer timer;
-    private GameManager gameManager;
+    private transient GameManager gameManager;
     private static JFrame frame;
     private boolean wasFullscreen = false;
+    private static final String FONT_NAME_DEFAULT = "Consolas";
     
     // FPS Tracking
     private long lastFpsTime = System.currentTimeMillis();
@@ -25,13 +29,14 @@ public class BomberQuest extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.setBackground(Color.BLACK);
         updatePreferredSize();
+
         
         try {
             gameManager = GameManager.getInstance();
             gameManager.init();
-            gameManager.setSettingsListener(() -> checkSettingsChange());
+            gameManager.setSettingsListener(this::checkSettingsChange);
         } catch (GameInitializationException e) {
-            System.err.println("Critical Error: " + e.getMessage());
+            logger.log(Level.WARNING, "Critical Error: {0}", e.getMessage());
             System.exit(1);
         }
 
@@ -90,7 +95,7 @@ public class BomberQuest extends JPanel implements ActionListener {
         // Wait a moment for cleanup
         try {
             Thread.sleep(50);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException _) {
             Thread.currentThread().interrupt();
         }
         
@@ -167,7 +172,7 @@ public class BomberQuest extends JPanel implements ActionListener {
             
             g2d.setTransform(new java.awt.geom.AffineTransform()); // Reset transform for UI
             g2d.setColor(Color.GREEN);
-            g2d.setFont(new Font("Consolas", Font.BOLD, 12));
+            g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 12));
             g2d.drawString("FPS: " + currentFps, 10, 20);
         }
         
@@ -183,7 +188,7 @@ public class BomberQuest extends JPanel implements ActionListener {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             frame = new JFrame("BomberQuest Retro - ULTRA HIGH FPS + PERFECT AI");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
             frame.setResizable(false);
             
             // Cleanup on close

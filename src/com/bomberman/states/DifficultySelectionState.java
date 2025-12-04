@@ -1,10 +1,10 @@
 package com.bomberman.states;
 
+import com.bomberman.core.EntityFactory;
 import com.bomberman.core.GameManager;
-import com.bomberman.managers.SettingsManager;
 import com.bomberman.entities.GameObject;
 import com.bomberman.entities.Player;
-import com.bomberman.core.EntityFactory;
+import com.bomberman.managers.SettingsManager;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -21,6 +21,7 @@ public class DifficultySelectionState implements GameState {
         "The standard experience. Balanced challenge.",
         "For experts. Many fast enemies. Good luck!"
     };
+    private static final String FONT_NAME_DEFAULT = "Consolas";
 
     private List<GameObject> previewWalls = new ArrayList<>();
     private List<GameObject> previewEnemies = new ArrayList<>();
@@ -28,7 +29,10 @@ public class DifficultySelectionState implements GameState {
     private int lastSelection = -1;
 
     @Override
-    public void update(GameManager gm) {}
+    public void update(GameManager gm) {
+        // Handle periodic game logic, state changes, or object movement/behavior
+        // for this component, driven by the main game loop (gm).
+    }
 
     @Override
     public void render(Graphics2D g2d, GameManager gm) {
@@ -41,7 +45,7 @@ public class DifficultySelectionState implements GameState {
 
         // Title
         g2d.setColor(Color.ORANGE);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 40));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 40));
         String title = "SELECT DIFFICULTY";
         int titleW = g2d.getFontMetrics().stringWidth(title);
         g2d.drawString(title, (screenW - titleW) / 2, 80);
@@ -52,7 +56,7 @@ public class DifficultySelectionState implements GameState {
         int startY = 200;
 
         // Options (Left Side)
-        g2d.setFont(new Font("Consolas", Font.BOLD, 32));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 32));
         for (int i = 0; i < options.length; i++) {
             int y = startY + i * 100;
             
@@ -68,10 +72,10 @@ public class DifficultySelectionState implements GameState {
                 g2d.drawString(text, leftX, y);
                 
                 // Description
-                g2d.setFont(new Font("Consolas", Font.ITALIC, 16));
+                g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.ITALIC, 16));
                 g2d.setColor(Color.LIGHT_GRAY);
                 g2d.drawString(descriptions[i], leftX + 20, y + 30);
-                g2d.setFont(new Font("Consolas", Font.BOLD, 32)); // Reset font
+                g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 32)); // Reset font
             } else {
                 g2d.setColor(Color.GRAY);
                 g2d.drawString(options[i], leftX, y);
@@ -83,7 +87,7 @@ public class DifficultySelectionState implements GameState {
         drawPreview(g2d, rightX, previewY, selection);
 
         // Footer
-        g2d.setFont(new Font("Consolas", Font.PLAIN, 16));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 16));
         g2d.setColor(Color.WHITE);
         String footer = "Press ENTER to Start, ESC to Back";
         int footerW = g2d.getFontMetrics().stringWidth(footer);
@@ -100,7 +104,6 @@ public class DifficultySelectionState implements GameState {
         int w = GameManager.GRID_W;
         int h = GameManager.GRID_H;
 
-        // Generate Walls (Same logic as GameManager)
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 if (x == 0 || x == w - 1 || y == 0 || y == h - 1) {
@@ -115,8 +118,11 @@ public class DifficultySelectionState implements GameState {
             }
         }
 
-        // Generate Enemies
-        int enemiesToSpawn = (selection == 0) ? 3 : (selection == 1) ? 6 : 10;
+        int enemiesToSpawn = switch (selection) {
+            case 0 -> 3;
+            case 1 -> 6;
+            default -> 10;
+        };
         int count = 0;
         int attempts = 0;
         while (count < enemiesToSpawn && attempts < 100) {
@@ -134,6 +140,7 @@ public class DifficultySelectionState implements GameState {
             }
             attempts++;
         }
+        
         
         previewPlayer.setPosition(1, 1);
     }
@@ -197,7 +204,7 @@ public class DifficultySelectionState implements GameState {
         
         // Label
         g2d.setColor(Color.CYAN);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 20));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 20));
         String label = "PREVIEW: " + options[selection];
         int labelW = g2d.getFontMetrics().stringWidth(label);
         g2d.drawString(label, x + (w - labelW)/2, y - 10);
@@ -214,7 +221,6 @@ public class DifficultySelectionState implements GameState {
         } else if (keyCode == KeyEvent.VK_ENTER) {
             SettingsManager.Difficulty diff = SettingsManager.Difficulty.MEDIUM;
             if (selection == 0) diff = SettingsManager.Difficulty.EASY;
-            if (selection == 1) diff = SettingsManager.Difficulty.MEDIUM;
             if (selection == 2) diff = SettingsManager.Difficulty.HARD;
             
             gm.setDifficulty(diff);

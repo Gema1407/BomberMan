@@ -7,8 +7,12 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 public class GameOverState implements GameState {
+    private static final String FONT_NAME_DEFAULT = "Consolas";
     @Override
-    public void update(GameManager gm) {}
+    public void update(GameManager gm) {
+        // Handle periodic game logic, state changes, or object movement/behavior
+        // for this component, driven by the main game loop (gm).
+    }
 
     @Override
     public void render(Graphics2D g2d, GameManager gm) {
@@ -37,7 +41,7 @@ public class GameOverState implements GameState {
         g2d.drawRoundRect(boxX, boxY, boxW, boxH, 20, 20);
         
         // Title with effect
-        g2d.setFont(new Font("Consolas", Font.BOLD, 60));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 60));
         String title = "GAME OVER";
         int titleW = g2d.getFontMetrics().stringWidth(title);
         int titleX = boxX + (boxW - titleW) / 2;
@@ -50,7 +54,7 @@ public class GameOverState implements GameState {
         
         // Instructions
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Consolas", Font.PLAIN, 20));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 20));
         String restart = "Press ENTER to Try Again";
         int restartW = g2d.getFontMetrics().stringWidth(restart);
         g2d.drawString(restart, boxX + (boxW - restartW) / 2, boxY + 170);

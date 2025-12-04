@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 public class SettingsState implements GameState {
     private int selection = 0;
     private final String[] options = { "Resolution", "Fullscreen", "Music Vol", "SFX Vol", "Retro Effects", "Show FPS", "Apply", "Back" };
+    private static final String FONT_NAME_DEFAULT = "Consolas";
     
     // Pending changes
     private SettingsManager.Resolution pendingResolution;
@@ -65,13 +66,13 @@ public class SettingsState implements GameState {
 
         // Title
         g2d.setColor(Color.CYAN);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 40));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 40));
         String title = "CONFIGURATION";
         int titleW = g2d.getFontMetrics().stringWidth(title);
         g2d.drawString(title, panelX + (panelW - titleW) / 2, panelY + 60);
 
         // Options
-        g2d.setFont(new Font("Consolas", Font.BOLD, 22));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 22));
         
         for (int i = 0; i < options.length; i++) {
             int y = panelY + 130 + i * 55;
@@ -99,12 +100,12 @@ public class SettingsState implements GameState {
                 case 0: // Resolution
                     String resText = "< " + pendingResolution + " >";
                     if (pendingFullscreen) {
-                        g2d.setFont(new Font("Consolas", Font.PLAIN, 18));
+                        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 18));
                         g2d.drawString(resText, valX, y);
-                        g2d.setFont(new Font("Consolas", Font.ITALIC, 12));
+                        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.ITALIC, 12));
                         g2d.setColor(new Color(150, 150, 170));
                         g2d.drawString("(Takes effect on exit fullscreen)", valX, y + 15);
-                        g2d.setFont(new Font("Consolas", Font.BOLD, 22));
+                        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 22));
                     } else {
                         g2d.drawString(resText, valX, y);
                     }
@@ -130,11 +131,13 @@ public class SettingsState implements GameState {
                 case 7: // Back
                     if (i == selection) g2d.drawString("[ ESC ]", valX, y);
                     break;
+                default:
+                    break;
             }
         }
         
         // Footer
-        g2d.setFont(new Font("Consolas", Font.ITALIC, 14));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.ITALIC, 14));
         g2d.setColor(Color.GRAY);
         String footer = "Press ENTER to Toggle/Apply, ARROWS to Navigate";
         int footerW = g2d.getFontMetrics().stringWidth(footer);
@@ -171,7 +174,7 @@ public class SettingsState implements GameState {
         if (value > 0) {
             java.awt.GradientPaint gp = new java.awt.GradientPaint(
                 x, y, new Color(100, 200, 100),
-                x + barW, y, new Color(50, 150, 50)
+                x + (float) barW, y, new Color(50, 150, 50)
             );
             g2d.setPaint(gp);
             g2d.fillRoundRect(x, y + 5, (int)(barW * (value / 100.0)), barH, 6, 6);
@@ -184,7 +187,7 @@ public class SettingsState implements GameState {
         
         // Text
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 16));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 16));
         g2d.drawString(value + "%", x + barW + 15, y + 16);
     }
 
@@ -250,5 +253,7 @@ public class SettingsState implements GameState {
     }
     
     @Override
-    public void handleKeyReleased(int keyCode, GameManager gm) {}
+    public void handleKeyReleased(int keyCode, GameManager gm) {
+        // Handling when the key released
+    }
 }

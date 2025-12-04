@@ -1,11 +1,15 @@
 package com.bomberman.core;
 
+import com.bomberman.entities.Bomb;
+import com.bomberman.entities.Enemy;
 import com.bomberman.entities.GameObject;
 import com.bomberman.entities.Wall;
-import com.bomberman.entities.Enemy;
-import com.bomberman.entities.Bomb;
 
 public class EntityFactory {
+
+    private EntityFactory() {
+
+    }
     public static GameObject createWall(int x, int y, boolean hard) {
         return new Wall(x, y, !hard);
     }

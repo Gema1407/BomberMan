@@ -1,7 +1,7 @@
 package com.bomberman.states;
 
-import com.bomberman.core.GameManager;
 import com.bomberman.core.EntityFactory;
+import com.bomberman.core.GameManager;
 import com.bomberman.entities.*;
 import com.bomberman.managers.SoundManager;
 import java.awt.Color;
@@ -15,7 +15,8 @@ import java.util.Set;
 public class PlayingState implements GameState {
     private Set<Integer> pressedKeys = new HashSet<>();
     private int moveDelay = 0;
-    private final int MOVE_DELAY_MAX = 8; // Adjust for speed (lower = faster)
+    private static final int MOVE_DELAY_MAX = 8; // Adjust for speed (lower = faster)
+    private static final String FONT_NAME_DEFAULT = "Consolas";
     
     // Pause Menu
     private boolean paused = false;
@@ -228,14 +229,14 @@ public class PlayingState implements GameState {
 
         // 2. Timer Section (Center)
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 24));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 24));
         long time = (System.currentTimeMillis() - gm.getGameStartTime()) / 1000;
         String timeStr = String.format("%02d:%02d", time / 60, time % 60);
         int timeW = g2d.getFontMetrics().stringWidth(timeStr);
         g2d.drawString(timeStr, (screenW - timeW) / 2, 32);
         
         // 3. Stats Section (Right)
-        g2d.setFont(new Font("Consolas", Font.PLAIN, 16));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 16));
         String enemyStr = "ENEMIES: " + gm.getEnemies().size();
         int enemyW = g2d.getFontMetrics().stringWidth(enemyStr);
         g2d.drawString(enemyStr, screenW - enemyW - 20, 20);
@@ -266,13 +267,13 @@ public class PlayingState implements GameState {
         g2d.drawRoundRect(boxX, boxY, boxW, boxH, 20, 20);
         
         // Title
-        g2d.setFont(new Font("Consolas", Font.BOLD, 40));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 40));
         String title = "PAUSED";
         int titleW = g2d.getFontMetrics().stringWidth(title);
         g2d.drawString(title, boxX + (boxW - titleW) / 2, boxY + 60);
         
         // Options
-        g2d.setFont(new Font("Consolas", Font.PLAIN, 24));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 24));
         for (int i = 0; i < pauseOptions.length; i++) {
             int optY = boxY + 130 + i * 50;
             String opt = pauseOptions[i];

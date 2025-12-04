@@ -98,9 +98,7 @@ public class Enemy extends GameObject {
     private void calculatePathToPlayer(List<GameObject> walls, List<GameObject> enemies, 
                                       List<GameObject> bombs, Player player, int gridW, int gridH) {
         // Create walkable checker lambda
-        Pathfinding.WalkableChecker checker = (tx, ty) -> {
-            return isValidMove(tx, ty, walls, enemies, bombs, gridW, gridH);
-        };
+        Pathfinding.WalkableChecker checker = (tx, ty) -> isValidMove(tx, ty, walls, enemies, bombs, gridW, gridH);
 
         // Find path using A* algorithm
         currentPath = Pathfinding.findPath(
@@ -126,7 +124,7 @@ public class Enemy extends GameObject {
             int ny = y + dirs[i][1];
 
             if (isValidMove(nx, ny, walls, enemies, bombs, gridW, gridH)) {
-                double dist = Math.pow(nx - player.getX(), 2) + Math.pow(ny - player.getY(), 2);
+                double dist = Math.pow((double) nx - player.getX(), 2) + Math.pow((double) ny - player.getY(), 2);
                 if (dist < minDistance) {
                     minDistance = dist;
                     bestDirIndex = i;
@@ -174,10 +172,8 @@ public class Enemy extends GameObject {
 
         // Check against other enemies (don't overlap)
         for (GameObject obj : enemies) {
-            if (!(obj instanceof Enemy)) continue;
             Enemy other = (Enemy) obj;
-            if (other.getX() == this.x && other.getY() == this.y)
-                continue; // Skip self
+            if (!(obj instanceof Enemy) || other.getX() == this.x && other.getY() == this.y) continue;
             if (other.getX() == tx && other.getY() == ty)
                 return false;
         }

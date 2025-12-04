@@ -21,10 +21,12 @@ public class SettingsManager {
         RES_2560x1440(2560, 1440),
         RES_3840x2160(3840, 2160);
 
-        int width, height;
+        int width;
+        int height;
         Resolution(int w, int h) { this.width = w; this.height = h; }
         public int getWidth() { return width; }
         public int getHeight() { return height; }
+        @Override
         public String toString() { return width + "x" + height; }
     }
 

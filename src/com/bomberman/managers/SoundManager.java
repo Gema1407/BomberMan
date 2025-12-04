@@ -3,12 +3,15 @@ package com.bomberman.managers;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
 public class SoundManager {
+    private static final Logger logger = Logger.getLogger(SoundManager.class.getName());
     private static SoundManager instance;
     private Map<String, Clip> sounds = new HashMap<>();
     private Clip currentMusic;
@@ -33,7 +36,7 @@ public class SoundManager {
 
     private SoundManager() {
         // Pre-load sounds here if files exist
-        // loadSound(BGM_MENU, "res/sounds/menu.wav");
+        // loadSound(BGM_MENU, "res/sounds/menu_theme.wav");
         // loadSound(SFX_EXPLOSION, "res/sounds/explosion.wav");
     }
 
@@ -45,14 +48,14 @@ public class SoundManager {
     }
     
     public void setMusicVolume(int scale) {
-        this.musicVolumeScale = Math.max(0, Math.min(100, scale));
+        this.musicVolumeScale = Math.clamp(scale, 0, 100);
         updateMusicVolume();
     }
     
     public int getMusicVolume() { return musicVolumeScale; }
     
     public void setSFXVolume(int scale) {
-        this.sfxVolumeScale = Math.max(0, Math.min(100, scale));
+        this.sfxVolumeScale = Math.clamp(scale, 0, 100);
     }
     
     public int getSFXVolume() { return sfxVolumeScale; }
@@ -78,7 +81,7 @@ public class SoundManager {
                 clip.open(audioIn);
                 sounds.put(name, clip);
             } else {
-                System.out.println("Sound file not found: " + path);
+                logger.log(Level.WARNING, "Sound file not found: {0}", path);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,9 +156,9 @@ public class SoundManager {
                 // Clamp to valid range if needed, usually -80 to 6
                 float min = gainControl.getMinimum();
                 float max = gainControl.getMaximum();
-                volume = Math.max(min, Math.min(max, volume));
+                volume = Math.clamp(volume,min,max);
                 gainControl.setValue(volume);
-            } catch (Exception e) {
+            } catch (Exception _) {
                 // Control not supported
             }
         }
@@ -177,6 +180,6 @@ public class SoundManager {
         loadSound(SFX_HOVER, "res/sounds/hover.wav");
         loadSound(SFX_CLICK, "res/sounds/click.wav");
         
-        System.out.println("Sound initialization complete.");
+        logger.info("Sound initialization complete.");
     }
 }

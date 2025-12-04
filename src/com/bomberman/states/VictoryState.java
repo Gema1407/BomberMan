@@ -11,9 +11,13 @@ public class VictoryState implements GameState {
     private StringBuilder username = new StringBuilder();
     private boolean saved = false;
     private String errorMessage = "";
+    private static final String FONT_NAME_DEFAULT = "Consolas";
 
     @Override
-    public void update(GameManager gm) {}
+    public void update(GameManager gm) {
+        // Handle periodic game logic, state changes, or object movement/behavior
+        // for this component, driven by the main game loop (gm).
+    }
 
     @Override
     public void render(Graphics2D g2d, GameManager gm) {
@@ -43,7 +47,7 @@ public class VictoryState implements GameState {
         g2d.drawRoundRect(boxX, boxY, boxW, boxH, 20, 20);
         
         // Title with glow effect
-        g2d.setFont(new Font("Consolas", Font.BOLD, 70));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.BOLD, 70));
         String title = "VICTORY!";
         int titleW = g2d.getFontMetrics().stringWidth(title);
         int titleX = boxX + (boxW - titleW) / 2;
@@ -61,7 +65,7 @@ public class VictoryState implements GameState {
         
         // Time
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Consolas", Font.PLAIN, 24));
+        g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 24));
         String timeStr = "Time: " + gm.getLastGameTime() + "s";
         int timeW = g2d.getFontMetrics().stringWidth(timeStr);
         g2d.drawString(timeStr, boxX + (boxW - timeW) / 2, boxY + 130);
@@ -77,7 +81,7 @@ public class VictoryState implements GameState {
             int promptW = g2d.getFontMetrics().stringWidth(prompt);
             g2d.drawString(prompt, boxX + (boxW - promptW) / 2, boxY + 210);
             
-            g2d.setFont(new Font("Consolas", Font.ITALIC, 16));
+            g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.ITALIC, 16));
             g2d.setColor(Color.LIGHT_GRAY);
             String hint = "Enter your name & press ENTER";
             int hintW = g2d.getFontMetrics().stringWidth(hint);
@@ -95,7 +99,7 @@ public class VictoryState implements GameState {
             g2d.drawString(savedMsg, boxX + (boxW - savedW) / 2, boxY + 200);
             
             g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("Consolas", Font.PLAIN, 20));
+            g2d.setFont(new Font(FONT_NAME_DEFAULT, Font.PLAIN, 20));
             String playMsg = "Press ENTER to Play Again";
             int playW = g2d.getFontMetrics().stringWidth(playMsg);
             g2d.drawString(playMsg, boxX + (boxW - playW) / 2, boxY + 280);
