@@ -95,7 +95,7 @@ public class BomberQuest extends JPanel implements ActionListener {
         // Wait a moment for cleanup
         try {
             Thread.sleep(50);
-        } catch (InterruptedException _) {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         

@@ -158,7 +158,7 @@ public class SoundManager {
                 float max = gainControl.getMaximum();
                 volume = Math.clamp(volume,min,max);
                 gainControl.setValue(volume);
-            } catch (Exception _) {
+            } catch (Exception e) {
                 // Control not supported
             }
         }
