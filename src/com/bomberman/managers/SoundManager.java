@@ -35,9 +35,7 @@ public class SoundManager {
     public static final String SFX_CLICK = "click";
 
     private SoundManager() {
-        // Pre-load sounds here if files exist
-        // loadSound(BGM_MENU, "res/sounds/menu_theme.wav");
-        // loadSound(SFX_EXPLOSION, "res/sounds/explosion.wav");
+        // Intentionally empty - sounds loaded via initSounds()
     }
 
     public static SoundManager getInstance() {
@@ -48,14 +46,14 @@ public class SoundManager {
     }
     
     public void setMusicVolume(int scale) {
-        this.musicVolumeScale = Math.clamp(scale, 0, 100);
+        this.musicVolumeScale = clamp(scale, 0, 100);
         updateMusicVolume();
     }
     
     public int getMusicVolume() { return musicVolumeScale; }
     
     public void setSFXVolume(int scale) {
-        this.sfxVolumeScale = Math.clamp(scale, 0, 100);
+        this.sfxVolumeScale = clamp(scale, 0, 100);
     }
     
     public int getSFXVolume() { return sfxVolumeScale; }
@@ -138,15 +136,8 @@ public class SoundManager {
     
     private float getDb(int scale) {
         if (scale <= 0) return -80.0f;
-        // Linear scale 0-100 to Logarithmic dB
-        // 100 -> 6.0 dB (amplified slightly)
-        // 50 -> -10 dB
-        // 1 -> -40 dB
-        return (float) (20.0 * Math.log10(scale / 100.0) * 2.0); 
-        // Simplified: 20 * log10(ratio). 
-        // Let's use a simpler mapping:
-        // Range -40dB to 6dB
-        // return (float) (-40.0 + (scale / 100.0) * 46.0);
+        // Convert linear scale (0-100) to logarithmic dB
+        return (float) (20.0 * Math.log10(scale / 100.0) * 2.0);
     }
 
     private void setVolume(Clip clip, float volume) {
@@ -156,12 +147,28 @@ public class SoundManager {
                 // Clamp to valid range if needed, usually -80 to 6
                 float min = gainControl.getMinimum();
                 float max = gainControl.getMaximum();
-                volume = Math.clamp(volume,min,max);
+                volume = clamp(volume, min, max);
                 gainControl.setValue(volume);
             } catch (Exception e) {
                 // Control not supported
             }
         }
+    }
+    
+    /**
+     * Clamps an integer value between min and max (inclusive).
+     * Compatibility method for Java versions before Java 21.
+     */
+    private int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
+    }
+    
+    /**
+     * Clamps a float value between min and max (inclusive).
+     * Compatibility method for Java versions before Java 21.
+     */
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
     }
     
     // Setup method for user to easily plug in files
